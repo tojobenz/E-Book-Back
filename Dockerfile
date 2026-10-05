@@ -2,17 +2,16 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-# Copy solution and project files
-COPY ["EBook.slnx", "./"]
+# Copy project files (excluding tests)
 COPY ["EBook.Api/EBook.Api.csproj", "EBook.Api/"]
 COPY ["EBook.Application/EBook.Application.csproj", "EBook.Application/"]
 COPY ["EBook.Domain/EBook.Domain.csproj", "EBook.Domain/"]
 COPY ["EBook.Infrastructure/EBook.Infrastructure.csproj", "EBook.Infrastructure/"]
 
-# Restore dependencies
-RUN dotnet restore "EBook.slnx"
+# Restore dependencies for API project only
+RUN dotnet restore "EBook.Api/EBook.Api.csproj"
 
-# Copy all source files
+# Copy all source files (excluding tests)
 COPY EBook.Api/. EBook.Api/
 COPY EBook.Application/. EBook.Application/
 COPY EBook.Domain/. EBook.Domain/
