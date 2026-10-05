@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: ebook-api
+    env: dotnet
+    plan: free
+    buildCommand: dotnet publish -c Release -o out
+    startCommand: dotnet out/EBook.Api.dll
+    envVars:
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:10000
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ebook-db
+          property: connectionString
+
+databases:
+  - name: ebook-db
+    databaseName: ebook
+    user: ebook_user

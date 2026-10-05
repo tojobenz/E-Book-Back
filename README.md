@@ -106,4 +106,60 @@ dotnet test
 
 The tests cover the main services, validation and repository logic.
 
+## 🚀 Deploy to Render
+
+### Prerequisites
+
+- A [Render](https://render.com) account
+- GitHub repository with this project
+
+### Deployment Steps
+
+1. **Push your code to GitHub**
+
+```bash
+git add .
+git commit -m "Ready for Render deployment"
+git push origin main
+```
+
+2. **Create a new Web Service on Render**
+
+- Go to [Render Dashboard](https://dashboard.render.com)
+- Click "New" → "Web Service"
+- Connect your GitHub repository
+- Render will detect the `render.yaml` file automatically
+- Click "Create Web Service"
+
+3. **Render will automatically:**
+
+- Create a PostgreSQL database
+- Build your .NET application
+- Deploy it with the correct environment variables
+- Set up the connection string
+
+4. **Update CORS settings**
+
+After deployment, update `appsettings.json` to add your Render URL:
+
+```json
+"AllowedOrigins": [
+  "http://localhost:4200",
+  "https://your-app.onrender.com"
+]
+```
+
+Then push the changes to trigger a redeployment.
+
+### Environment Variables
+
+Render automatically sets:
+- `DATABASE_URL`: PostgreSQL connection string
+- `ASPNETCORE_URLS`: http://0.0.0.0:10000
+- `ASPNETCORE_ENVIRONMENT`: Production
+
+### Database Migrations
+
+The application uses `EnsureCreated()` for simplicity in production. For a production app, consider using EF Core migrations instead.
+
 This project was built as a backend practice project to work with **ASP.NET Core, EF Core, REST APIs and Clean Architecture**.
