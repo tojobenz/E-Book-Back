@@ -42,6 +42,11 @@ builder.Services.AddSwaggerGen();
 
 // Register application and infrastructure services
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Use persistent disk path on Render
+if (builder.Environment.IsProduction())
+{
+    connectionString = "Data Source=/app/data/ebook.db";
+}
 builder.Services.AddInfrastructure(connectionString ?? "Data Source=ebook.db");
 builder.Services.AddApplication();
 

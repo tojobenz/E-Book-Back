@@ -7,8 +7,8 @@ The project follows a clean layered architecture and is designed as a backend fo
 ## 🛠️ Tech Stack
 
 * ASP.NET Core 10
-* Entity Framework Core
-* SQLite
+* Entity Framework Core 10
+* SQLite (with persistent disk on Render)
 * Swagger / OpenAPI
 * FluentValidation
 * Serilog
@@ -133,10 +133,9 @@ git push origin main
 
 3. **Render will automatically:**
 
-- Create a PostgreSQL database
-- Build your .NET application
+- Build the Docker image
 - Deploy it with the correct environment variables
-- Set up the connection string
+- Set up a persistent disk (1GB) for SQLite database storage
 
 4. **Update CORS settings**
 
@@ -154,12 +153,55 @@ Then push the changes to trigger a redeployment.
 ### Environment Variables
 
 Render automatically sets:
-- `DATABASE_URL`: PostgreSQL connection string
 - `ASPNETCORE_URLS`: http://0.0.0.0:10000
 - `ASPNETCORE_ENVIRONMENT`: Production
+
+### Database Storage
+
+The application uses SQLite with persistent disk storage on Render. The database file is stored at `/app/data/ebook.db` and persists across deployments.
 
 ### Database Migrations
 
 The application uses `EnsureCreated()` for simplicity in production. For a production app, consider using EF Core migrations instead.
+
+## 🐳 Docker Support
+
+### Build the Docker image locally
+
+```bash
+docker build -t ebook-api .
+```
+
+### Run with Docker
+
+```bash
+docker run -p 8080:80 -e DATABASE_URL="Data Source=ebook.db" ebook-api
+```
+
+### Run with Docker Compose (for local development)
+
+Create a `docker-compose.yml`:
+
+```yaml
+version: '3.8'
+services:
+  api:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DATABASE_URL=Data Source=ebook.db
+    volumes:
+      - ./ebook.db:/app/ebook.db
+```
+
+Then run:
+
+```bash
+docker-compose up
+```
+
+The API will be available at `http://localhost:8080`
 
 This project was built as a backend practice project to work with **ASP.NET Core, EF Core, REST APIs and Clean Architecture**.
